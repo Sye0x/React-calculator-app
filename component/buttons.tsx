@@ -5,33 +5,47 @@ import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Entypo from "@expo/vector-icons/Entypo";
 
-const Buttons = ({ onValueChange }: any) => {
-  const [value1, setval1] = useState();
-  const [value2, setva21] = useState();
+const Buttons = ({ onValueChange, setOperator, Clear }: any) => {
+  const [value1, setval1] = useState<number | string>("!");
 
   function onclick(num: any) {
-    if (num === "C") {
-      num = "0";
+    num = String(num);
+    if (num === "0" && value1 === "!") {
+      setval1("0");
+      onValueChange("0");
+    } else if (num === 0 && value1 === "0") {
+      setval1("0");
+      onValueChange("0");
+    } else if (num !== "0" && value1 === "!") {
       setval1(num);
+      onValueChange(num);
+    } else if (num !== 0 && value1 === "0") {
+      setval1(num);
+      onValueChange(num);
     } else {
-      if (value1 !== "0" && value1 !== 0) {
-        num = value1 + num;
-      }
+      num = value1 + num;
       setval1(num);
+      onValueChange(num);
     }
-    onValueChange(num);
+  }
+
+  function onclick2(opt: any) {
+    if (value1 !== "!") {
+      setOperator({ opt: opt, num: value1 });
+      setval1("!");
+    }
+  }
+  function onclick3() {
+    setval1("!");
+    Clear();
   }
 
   function buttons(num: any) {
     if (num === 0) {
-      return ["%", 0, "."];
+      return [0, "."];
     }
     if (num === "c") {
-      return [
-        "C",
-        <FontAwesome6 name="divide" size={24} color="white" />,
-        <Entypo name="cross" size={32} color="white" />,
-      ];
+      return [];
     }
     let arr = [];
 
@@ -47,19 +61,15 @@ const Buttons = ({ onValueChange }: any) => {
     <View style={{ flexDirection: "row", marginTop: 1, marginHorizontal: 15 }}>
       <View>
         <View style={{ flexDirection: "row" }}>
-          {buttons("c").map((number, index) => (
-            <Pressable
-              style={styles.container2}
-              onPress={() => onclick(number)}
-            >
-              <Text
-                style={{ fontSize: 22, fontWeight: "600", color: "white" }}
-                key={index}
-              >
-                {number}
-              </Text>
-            </Pressable>
-          ))}
+          <Pressable style={styles.container2} onPress={() => onclick3()}>
+            <Text style={{ color: "white", fontSize: 30 }}>C</Text>
+          </Pressable>
+          <Pressable style={styles.container2} onPress={() => onclick2("÷")}>
+            <FontAwesome6 name="divide" size={24} color="white" />
+          </Pressable>
+          <Pressable style={styles.container2} onPress={() => onclick2("x")}>
+            <Entypo name="cross" size={32} color="white" />
+          </Pressable>
         </View>
         <View style={{ flexDirection: "row" }}>
           {buttons(7).map((number, index) => (
@@ -90,6 +100,9 @@ const Buttons = ({ onValueChange }: any) => {
         </View>
 
         <View style={{ flexDirection: "row" }}>
+          <Pressable style={styles.container} onPress={() => onclick2("%")}>
+            <Text style={styles.text}>%</Text>
+          </Pressable>
           {buttons(0).map((number, index) => (
             <Pressable style={styles.container} onPress={() => onclick(number)}>
               <Text style={styles.text} key={index}>
@@ -101,19 +114,19 @@ const Buttons = ({ onValueChange }: any) => {
       </View>
       <View>
         <Pressable style={styles.container2}>
-          <Feather name="delete" size={24} color="white" />
+          <Feather name="delete" size={28} color="white" />
         </Pressable>
-        <Pressable style={styles.container2}>
+        <Pressable style={styles.container2} onPress={() => onclick2("-")}>
           <Text style={styles.text2}>
             <Entypo name="minus" size={32} color="white" />
           </Text>
         </Pressable>
-        <Pressable style={styles.container2}>
+        <Pressable style={styles.container2} onPress={() => onclick2("+")}>
           <Text style={styles.text2}>
             <Entypo name="plus" size={32} color="white" />
           </Text>
         </Pressable>
-        <Pressable style={styles.container3}>
+        <Pressable style={styles.container3} onPress={() => onclick2("=")}>
           <Text style={styles.text2}>
             <FontAwesome6 name="equals" size={26} color="white" />
           </Text>
