@@ -103,6 +103,15 @@ export default function Index() {
     setprev("");
     setInputValue("");
   }
+
+  const calculateFontSize = (length: number) => {
+    if (length > 6) {
+      return 35;
+    } else {
+      return 45;
+    }
+  };
+
   return (
     <View style={{ marginTop: 68 }}>
       <TextInput
@@ -112,7 +121,10 @@ export default function Index() {
         editable={false}
       />
       <TextInput
-        style={styles.Inputcontainer}
+        style={[
+          styles.Inputcontainer,
+          { fontSize: calculateFontSize(inputValue.length) },
+        ]}
         value={inputValue}
         placeholder="0"
         placeholderTextColor="#8A9A5B"
@@ -131,7 +143,7 @@ const styles = StyleSheet.create({
   Inputcontainer: {
     height: "10%",
     width: "100%",
-    fontSize: 45,
+
     textAlign: "right",
     paddingHorizontal: 30,
     marginTop: 15,
