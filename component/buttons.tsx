@@ -7,12 +7,16 @@ import Entypo from "@expo/vector-icons/Entypo";
 
 const Buttons = ({ onValueChange, setOperator, Clear }: any) => {
   const [value1, setval1] = useState<string>("!");
+  const [decimal, setdeciaml] = useState<string>("!");
 
   function onclick(num: any) {
     num = String(num);
     let x = value1;
     if (x.length < 15) {
-      if (num === "0" && value1 === "!") {
+      if (num === "." && decimal == "!") {
+        setdeciaml(".");
+        onValueChange(".");
+      } else if (num === "0" && value1 === "!") {
         setval1("0");
         onValueChange("0");
       } else if (num === 0 && value1 === "0") {
