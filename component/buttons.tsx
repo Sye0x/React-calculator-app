@@ -9,17 +9,30 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-const Buttons = ({ onValueChange, setOperator, Clear }: any) => {
+const Buttons = ({ onValueChange, setOperator, Clear, Delete }: any) => {
   const [value1, setval1] = useState<string>("!");
   const [decimal, setdeciaml] = useState<string>("!");
+
+  function onclickdelete() {
+    Delete();
+    setval1(value1.slice(0, -1));
+  }
 
   function onclick(num: any) {
     num = String(num);
     let x = value1;
-    if (x.length < 15) {
-      if (num === "." && decimal == "!") {
-        setdeciaml(".");
-        onValueChange(".");
+
+    // Allow maximum of 15 characters including decimal point
+    if (x.length < 13) {
+      if (num === ".") {
+        if (decimal === "!") {
+          // If decimal hasn't been added yet
+          const updatedValue = value1 === "!" ? "0." : value1 + ".";
+          setval1(updatedValue);
+          onValueChange(updatedValue);
+          console.log(updatedValue);
+          setdeciaml("."); // Mark that a decimal has been added
+        }
       } else if (num === "0" && value1 === "!") {
         setval1("0");
         onValueChange("0");
@@ -44,10 +57,12 @@ const Buttons = ({ onValueChange, setOperator, Clear }: any) => {
     if (value1 !== "!") {
       setOperator({ opt: opt, num: value1 });
       setval1("!");
+      setdeciaml("!");
     }
   }
   function onclick3() {
     setval1("!");
+    setdeciaml("!");
     Clear();
   }
 
@@ -130,7 +145,7 @@ const Buttons = ({ onValueChange, setOperator, Clear }: any) => {
         </View>
       </View>
       <View>
-        <Pressable style={styles.container2}>
+        <Pressable style={styles.container2} onPress={() => onclickdelete()}>
           <Feather name="delete" size={28} color="white" />
         </Pressable>
         <Pressable style={styles.container2} onPress={() => onclick2("-")}>

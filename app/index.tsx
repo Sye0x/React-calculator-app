@@ -7,49 +7,42 @@ import {
 } from "react-native-responsive-screen";
 
 export default function Index() {
-  // State to store the current input value displayed on the calculator screen
   const [inputValue, setInputValue] = useState("0");
-
-  // State to store the first operand in the calculation
   const [value1, setval1] = useState<string>("");
-
-  // State to store the previous calculation (for display above the current input)
   const [preval, setprev] = useState<string>("");
-
-  // State to store the current operator (+, -, x, ÷, etc.)
   const [operator, setopt] = useState<string>("");
-
-  // State to store the second operand in the calculation
   const [value2, setval2] = useState<string>("");
 
-  // Function to handle input changes (numbers and decimals)
   function handleValueChange(newValue: string) {
-    // If an operator is selected, update the second operand
-    if (operator) {
-      setval2(newValue);
+    // Remove commas to check the actual number length
+    const plainNumber = newValue;
+
+    // Check if the input exceeds the limit of 12 digits
+    if (plainNumber.length <= 12 && parseFloat(plainNumber) <= 999999999999) {
+      if (operator) {
+        setval2(plainNumber);
+      } else {
+        setval1(plainNumber);
+      }
+      if (newValue === "0.") {
+        setInputValue(newValue);
+      } else if (newValue.endsWith(".")) {
+        setInputValue(formatNumberWithCommas(plainNumber) + ".");
+      } else {
+        setInputValue(formatNumberWithCommas(plainNumber));
+      }
     } else {
-      // Otherwise, update the first operand
-      setval1(newValue);
+      // Optional: You can give feedback to the user if they try to input more than the limit
+      console.log("Input exceeds the allowed limit of 12 digits.");
     }
-
-    // Format the input value with commas for better readability
-    setInputValue(formatNumberWithCommas(newValue));
   }
-
-  // Function to handle operator buttons (+, -, x, ÷, etc.)
   function handleOperator({ opt }: any) {
-    console.log("Operator:", opt);
-
-    // If the first operand is set and the second operand is not, store the operator and reset the input field
     if (value1 && !value2) {
       setopt(opt);
       setInputValue("");
-    }
-    // If both operands are set, perform the calculation
-    else if (value1 && value2) {
+    } else if (value1 && value2) {
       let result: string;
 
-      // Perform the calculation based on the operator
       switch (operator) {
         case "+":
           result = String(parseFloat(value1) + parseFloat(value2));
@@ -61,40 +54,43 @@ export default function Index() {
           result = String(parseFloat(value1) * parseFloat(value2));
           break;
         case "÷":
-          if (parseFloat(value2) === 0) {
-            result = "Error"; // Handle division by zero
-          } else {
-            result = String(parseFloat(value1) / parseFloat(value2));
-          }
+          result =
+            parseFloat(value2) === 0
+              ? "Error"
+              : String(parseFloat(value1) / parseFloat(value2));
           break;
         case "%":
-          if (parseFloat(value2) === 0) {
-            result = "Error"; // Handle modulus by zero
-          } else {
-            result = String(parseFloat(value1) % parseFloat(value2));
-          }
+          result =
+            parseFloat(value2) === 0
+              ? "Error"
+              : String(parseFloat(value1) % parseFloat(value2));
           break;
         default:
           result = value1;
           break;
       }
 
-      // Format the result and update the display
+      // Convert the result to a number to compare with the limit
+      if (!isNaN(parseFloat(result)) && parseFloat(result) > 999999999999) {
+        result = "Number too big"; // Set a limit
+      }
+
       setInputValue(
-        result === "Error" ? "Error" : formatNumberWithCommas(result)
+        result === "Error" || result === "Number too big"
+          ? result
+          : formatNumberWithCommas(result)
       );
       setprev(
         `${formatNumberWithCommas(value1)} ${operator} ${formatNumberWithCommas(
           value2
         )}`
       );
-      setval1(result); // Store the result as the first operand for further calculations
-      setval2(""); // Clear the second operand
-      setopt(opt === "=" ? "" : opt); // Clear operator if "=" is pressed, otherwise set the new operator
+      setval1(result === "Number too big" ? "" : result);
+      setval2("");
+      setopt(opt === "=" ? "" : opt);
     }
   }
 
-  // Function to clear all states and reset the calculator
   function handleClear() {
     setval1("");
     setval2("");
@@ -103,31 +99,52 @@ export default function Index() {
     setInputValue("");
   }
 
-  // Function to adjust font size based on the length of the input
   const calculateFontSize = (length: number) => {
     return length > 6 ? 35 : 45;
   };
+  const calculateFontSize2 = (length: number) => {
+    return length > 6 ? 25 : 45;
+  };
 
-  // Function to format a number with commas for thousands
   const formatNumberWithCommas = (number: string) => {
     const parts = number.split(".");
     const integerPart = parts[0];
     const decimalPart = parts[1] ? `.${parts[1]}` : "";
-
-    // Add commas to the integer part of the number
     return integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + decimalPart;
   };
 
+  function handleCDelete() {
+    if (operator) {
+      if (value2.length > 0) {
+        const updatedValue2 = value2.slice(0, -1);
+        setval2(updatedValue2);
+        setInputValue(
+          updatedValue2 ? formatNumberWithCommas(updatedValue2) : "0"
+        );
+      }
+    } else {
+      if (value1.length > 0) {
+        const updatedValue1 = value1.slice(0, -1);
+        setval1(updatedValue1);
+        setInputValue(
+          updatedValue1 ? formatNumberWithCommas(updatedValue1) : "0"
+        );
+      }
+    }
+  }
+
   return (
     <View style={{ marginTop: hp(14), height: "100%", width: "100%" }}>
-      {/* Display the previous calculation (above the current input) */}
       <TextInput
-        style={styles.Inputcontainer2}
+        style={[
+          styles.Inputcontainer2,
+          { fontSize: calculateFontSize2(inputValue.length) },
+        ]}
         value={preval}
         placeholderTextColor="#8A9A5B"
         editable={false}
+        multiline={true}
       />
-      {/* Display the current input value */}
       <TextInput
         style={[
           styles.Inputcontainer,
@@ -136,20 +153,22 @@ export default function Index() {
         value={inputValue}
         placeholder="0"
         placeholderTextColor="#8A9A5B"
-        editable={false} // Disable editing directly for demonstration
+        editable={false}
+        scrollEnabled={true}
+        multiline={false}
+        textAlign="right"
       />
-      {/* Custom buttons component to handle input and operators */}
       <Buttons
         onValueChange={handleValueChange}
-        setOperator={handleOperator} // Pass handleOperator as a prop
+        setOperator={handleOperator}
         Clear={handleClear}
+        Delete={handleCDelete}
         style={{ height: "55%", width: "100%" }}
       />
     </View>
   );
 }
 
-// Styles for the input containers
 const styles = StyleSheet.create({
   Inputcontainer: {
     height: hp(12),
