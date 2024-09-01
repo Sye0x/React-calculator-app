@@ -1,6 +1,10 @@
 import { Text, View, TextInput, StyleSheet } from "react-native";
 import Buttons from "@/component/buttons";
 import React, { useState } from "react";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function Index() {
   // State to store the current input value displayed on the calculator screen
@@ -115,7 +119,7 @@ export default function Index() {
   };
 
   return (
-    <View style={{ marginTop: 68 }}>
+    <View style={{ marginTop: hp(14), height: "100%", width: "100%" }}>
       {/* Display the previous calculation (above the current input) */}
       <TextInput
         style={styles.Inputcontainer2}
@@ -139,6 +143,7 @@ export default function Index() {
         onValueChange={handleValueChange}
         setOperator={handleOperator} // Pass handleOperator as a prop
         Clear={handleClear}
+        style={{ height: "55%", width: "100%" }}
       />
     </View>
   );
@@ -147,22 +152,22 @@ export default function Index() {
 // Styles for the input containers
 const styles = StyleSheet.create({
   Inputcontainer: {
-    height: "10%",
+    height: hp(12),
     width: "100%",
     textAlign: "right",
-    paddingHorizontal: 30,
-    marginTop: 15,
+    paddingRight: wp(10),
+    marginTop: wp(3),
     paddingTop: 10,
     color: "#8A9A5B",
+    fontSize: wp(11),
   },
   Inputcontainer2: {
-    height: "10%",
+    height: hp(12),
     width: "100%",
-    fontSize: 35,
+    fontSize: wp(7),
     textAlign: "right",
-    paddingHorizontal: 36,
-    marginTop: 140,
-    paddingTop: 5,
-    color: "#888888",
+    paddingRight: wp(10),
+    paddingTop: wp(9),
+    color: "#8A9A5B",
   },
 });

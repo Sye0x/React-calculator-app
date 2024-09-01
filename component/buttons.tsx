@@ -4,6 +4,10 @@ import React from "react";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Entypo from "@expo/vector-icons/Entypo";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const Buttons = ({ onValueChange, setOperator, Clear }: any) => {
   const [value1, setval1] = useState<string>("!");
@@ -65,7 +69,13 @@ const Buttons = ({ onValueChange, setOperator, Clear }: any) => {
   }
 
   return (
-    <View style={{ flexDirection: "row", marginTop: 1, marginHorizontal: 15 }}>
+    <View
+      style={{
+        flexDirection: "row",
+        marginTop: 1,
+        marginHorizontal: wp(4),
+      }}
+    >
       <View>
         <View style={{ flexDirection: "row" }}>
           <Pressable style={styles.container2} onPress={() => onclick3()}>
@@ -147,12 +157,13 @@ export default Buttons;
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
+    marginVertical: wp(2),
+    marginHorizontal: wp(1.5),
     backgroundColor: "#FAF9F6",
     padding: 10,
-    height: 75,
-    width: 75,
-    borderRadius: 40,
+    height: wp(20),
+    width: wp(20),
+    borderRadius: wp(50),
     shadowColor: "#333333",
     shadowOffset: {
       width: -2,
@@ -164,13 +175,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container2: {
-    margin: 10,
-
+    marginVertical: wp(2),
+    marginHorizontal: wp(1.5),
     backgroundColor: "#8A9A5B",
     padding: 10,
-    height: 75,
-    width: 75,
-    borderRadius: 40,
+    height: wp(20),
+    width: wp(20),
+    borderRadius: wp(50),
     shadowColor: "#333333",
     shadowOffset: {
       width: -2,
@@ -182,11 +193,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container3: {
-    margin: 10,
+    marginVertical: wp(2),
+    marginHorizontal: wp(1.5),
     backgroundColor: "#8A9A5B",
     padding: 10,
-    height: 175,
-    width: 75,
+    height: wp(44),
+    width: wp(20),
     borderRadius: 45,
     shadowColor: "#333333",
     shadowOffset: {
